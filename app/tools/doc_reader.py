@@ -41,7 +41,11 @@ class DocReader:
 
         file_names = os.listdir(dirname)
         paths = map(lambda name: os.path.join(dirname, name), file_names)
-        paths = filter(lambda name: name.lower().split(".")[-1] in extensions, paths)
+
+        extensions_filter = lambda name: name.lower().split(".")[-1] in extensions
+
+        paths = filter(extensions_filter, paths)
+        file_names = filter(extensions_filter, file_names)
 
         for path, file_name in zip(paths, file_names):
             try:
