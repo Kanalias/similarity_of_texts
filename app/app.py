@@ -54,4 +54,4 @@ class App:
         source_file = files[0]
         target_files = list(filter(lambda x: x["file_name"] != source_file["file_name"], files))
 
-        self.similarity_docs.similarity(source_file, target_files)
+        self.similarity_docs.similarity(source_file, target_files[0:5])

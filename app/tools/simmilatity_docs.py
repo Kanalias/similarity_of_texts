@@ -9,7 +9,7 @@ from app.methods.word_2_vec import W2V
 class SimilarityDocs:
 
     def __init__(self, w2v):
-        self.score = 0.5
+        self.score = 0.98753
         self.w2v: W2V = w2v
 
     def print_similarity(self, df: pandas.DataFrame, source_file, target_files):
@@ -59,7 +59,7 @@ class SimilarityDocs:
                                        for target_vector in target_vectors])
                              for source_vector in source_vectors])
 
-            max_elements = np.argwhere(sims == sims.max())
+            max_elements = np.argwhere(sims >= self.score)
 
             source_filter_texts = [source_file["filter_texts"][indexs[0]] for indexs in max_elements]
             source_texts = [source_file["texts"][indexs[0]] for indexs in max_elements]
