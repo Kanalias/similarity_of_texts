@@ -31,7 +31,7 @@ class TextPreprocessing:
         if is_lower:
             text = text.lower()
 
-        text = re.sub(r"https?://[^,\s]+,?", "", text)# Удаление URL
+        text = re.sub(r"https?://[^,\s]+,?", "", text)  # Удаление URL
 
         words = word_tokenize(text, language="russian")
 
@@ -60,26 +60,13 @@ class TextPreprocessing:
 
         return cleaned_words, text
 
-    def get_filter_documents(self, texts, is_paragraph: bool = True):
-        _documents = []
-        _documents_orig = []
-        for text in texts:
+    def get_filter_documents(self, texts, is_sentences: bool = False):
+        if is_sentences:
+            texts = [sentence for text in texts for sentence in sent_tokenize(text, language="russian")]
 
-            if is_paragraph:
-                filter_text, orig_text = self.text_preprocessing(text)
-                if filter_text:
-                    _documents.append(filter_text)
-                    _documents_orig.append(orig_text)
-            else:
-                sentences = sent_tokenize(text)
-
-                for sentence in sentences:
-                    filter_text, orig_text = self.text_preprocessing(sentence)
-                    if filter_text:
-                        _documents.append(filter_text)
-                        _documents_orig.append(orig_text)
-
-        return _documents, _documents_orig
+        filter_documents = [(index, self.text_preprocessing(text)[0]) for index, text in enumerate(texts)]
+        filter_documents = list(filter(lambda x: x[1], filter_documents))
+        return filter_documents, texts
 
     # def d2v_text_preprocessing(text: str,
     #                            is_lower: bool = True,
