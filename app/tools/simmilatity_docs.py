@@ -48,12 +48,12 @@ class SimilarityDocs:
             Общий процент похожести, поделить количество похожих элементов на количество всех
         """
 
-        source_vectors = [self.w2v.get_avg_vector(source_doc) for source_doc in source_file["filter_texts"]]
+        source_vectors = [self.w2v.get_avg_vector(source_doc[1]) for source_doc in source_file["filter_texts"]]
 
         df = pandas.DataFrame()
 
         for target_file in target_files:
-            target_vectors = [self.w2v.get_avg_vector(target_doc) for target_doc in target_file["filter_texts"]]
+            target_vectors = [self.w2v.get_avg_vector(target_doc[1]) for target_doc in target_file["filter_texts"]]
 
             sims = np.array([np.array([self.w2v.similarity(source_vector, target_vector)
                                        for target_vector in target_vectors])
@@ -61,12 +61,12 @@ class SimilarityDocs:
 
             max_elements = np.argwhere(sims >= self.score)
 
-            source_filter_texts = [source_file["filter_texts"][indexs[0]] for indexs in max_elements]
-            source_texts = [source_file["texts"][indexs[0]] for indexs in max_elements]
+            source_filter_texts = [source_file["filter_texts"][indexs[0]][1] for indexs in max_elements]
+            source_texts = [source_file["texts"][source_file["filter_texts"][indexs[0]][0]] for indexs in max_elements]
             source_index_texts = [indexs[0] for indexs in max_elements]
 
-            target_filter_texts = [target_file["filter_texts"][indexs[1]] for indexs in max_elements]
-            target_texts = [target_file["texts"][indexs[1]] for indexs in max_elements]
+            target_filter_texts = [target_file["filter_texts"][indexs[1]][1] for indexs in max_elements]
+            target_texts = [target_file["texts"][target_file["filter_texts"][indexs[1]][0]] for indexs in max_elements]
             target_index_texts = [indexs[1] for indexs in max_elements]
 
             sims = [sims[indexs[0]][indexs[1]] for indexs in max_elements]
