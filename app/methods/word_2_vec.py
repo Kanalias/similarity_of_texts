@@ -17,28 +17,36 @@ class W2V:
         self.keyed_vectors = None
         self.index2word_set = None
 
-    def train(self, documents: List):
+    def train(self, documents: List, update: bool = False, compute_loss: bool = False) -> None:
 
         # model = Word2Vec(window=10, vector_size=self.vector_size, epochs=30, workers=6, min_count=2, negative=15)
         # model = Word2Vec(workers=cpu_count(), vector_size=self.vector_size,
         #                  epochs=40, window=10, min_count=5, negative=5,
         #                  sg=1, ns_exponent=0.75, cbow_mean=1, seed=1, shrink_windows=True
         #                  )
-        model = Word2Vec(workers=cpu_count(), vector_size=self.vector_size,
-                         epochs=40, window=10, min_count=5, negative=5, sample=1e-3,
-                         sg=1, ns_exponent=0.75, cbow_mean=1, seed=1, shrink_windows=True
-                         )
+        if update:
+            self.model.compute_loss = compute_loss
+            self.model.build_vocab(documents, update=True)
+            self.model.train(documents, total_examples=self.model.corpus_count, epochs=self.model.epochs)
+            self.keyed_vectors = self.model.wv
+            self.index2word_set = set(self.model.wv.index_to_key)
+        else:
+            model = Word2Vec(workers=cpu_count(), vector_size=self.vector_size,
+                             epochs=40, window=10, min_count=5, negative=5, sample=1e-3,
+                             sg=1, ns_exponent=0.75, cbow_mean=1, seed=1, shrink_windows=True,
+                             compute_loss=compute_loss
+                             )
 
-        model.build_vocab(documents)
-        model.train(documents, total_examples=model.corpus_count, epochs=model.epochs, report_delay=1)
-        self.keyed_vectors = model.wv
-        self.index2word_set = set(model.wv.index_to_key)
-        self.model = model
+            model.build_vocab(documents)
+            model.train(documents, total_examples=model.corpus_count, epochs=model.epochs, report_delay=1)
+            self.keyed_vectors = model.wv
+            self.index2word_set = set(model.wv.index_to_key)
+            self.model = model
 
-    def save(self, name: str):
+    def save(self, name: str) -> None:
         self.model.save(f"app/models/{name}")
 
-    def load(self, path: str, is_api: bool = False):
+    def load(self, path: str, is_api: bool = False) -> None:
         if is_api:
             self.keyed_vectors = downloader.load(path)
         else:
