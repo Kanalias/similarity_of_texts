@@ -31,6 +31,8 @@ class TextPreprocessing:
         if is_lower:
             text = text.lower()
 
+        text = re.sub(r"https?://[^,\s]+,?", "", text)# Удаление URL
+
         words = word_tokenize(text, language="russian")
 
         cleaned_words = []
