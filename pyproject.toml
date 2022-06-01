@@ -12,6 +12,7 @@ pywin32 = "^304"
 nltk = "^3.7"
 pymorphy2 = "^0.9.1"
 pandas = "^1.4.2"
+seaborn = "^0.11.2"
 
 [tool.poetry.dev-dependencies]
 
