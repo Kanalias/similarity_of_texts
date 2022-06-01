@@ -7,6 +7,8 @@ from gensim import downloader
 from scipy import spatial
 from multiprocessing import cpu_count
 from app.tools import text_preprocessing
+from sklearn.decomposition import IncrementalPCA    # inital reduction
+from sklearn.manifold import TSNE                   # final reduction
 
 
 class W2V:
@@ -33,7 +35,7 @@ class W2V:
             self.index2word_set = set(self.model.wv.index_to_key)
         else:
             model = Word2Vec(workers=cpu_count(), vector_size=self.vector_size,
-                             epochs=40, window=10, min_count=5, negative=5, sample=1e-3,
+                             epochs=30, window=10, min_count=3, hs=0, negative=10, sample=1e-3,
                              sg=1, ns_exponent=0.75, cbow_mean=1, seed=1, shrink_windows=True,
                              compute_loss=compute_loss
                              )
@@ -124,3 +126,18 @@ class W2V:
         return 1 - spatial.distance.cosine(vec1, vec2) \
             if np.count_nonzero(vec1 == 0) != self.vector_size and np.count_nonzero(vec2 == 0) != self.vector_size \
             else 0
+
+    def reduce_dimensions(self, num_dimensions: int = 2):
+        # final num dimensions (2D, 3D, etc)
+
+        # extract the words & their vectors, as numpy arrays
+        vectors = np.asarray(self.model.wv.vectors)
+        labels = np.asarray(self.model.wv.index_to_key)  # fixed-width numpy strings
+
+        # reduce using t-SNE
+        tsne = TSNE(n_components=num_dimensions, random_state=0)
+        vectors = tsne.fit_transform(vectors)
+
+        x_vals = [v[0] for v in vectors]
+        y_vals = [v[1] for v in vectors]
+        return x_vals, y_vals, labels
