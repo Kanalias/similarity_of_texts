@@ -1,12 +1,8 @@
 import os
 from typing import List, Tuple
 import re
-import nltk
 from gensim.models import doc2vec
 from nltk.tokenize import sent_tokenize, word_tokenize
-
-nltk.download("stopwords")
-from nltk.corpus import stopwords
 import pymorphy2
 
 
@@ -15,12 +11,17 @@ class TextPreprocessing:
 
     def __init__(self):
         self.morph = pymorphy2.MorphAnalyzer()
-        self.stop_words = list(stopwords.words("russian"))
+        self.stop_words = self.__read_custom_stop_words()
         self.my_stop_words = self.__read_stop_words()
 
     @staticmethod
     def __read_stop_words():
         with open(f"{os.path.dirname(os.path.abspath(__file__))}/data/my_stop_words.txt", "r", encoding="utf-8") as f:
+            return [item for item in f.read().splitlines()]
+
+    @staticmethod
+    def __read_custom_stop_words():
+        with open(f"{os.path.dirname(os.path.abspath(__file__))}/data/custom_stop_words.txt", "r", encoding="utf-8") as f:
             return [item for item in f.read().splitlines()]
 
     def text_preprocessing(self, text: str,
