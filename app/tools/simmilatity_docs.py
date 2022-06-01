@@ -4,7 +4,6 @@ import numpy as np
 import pandas
 
 from app.methods.word_2_vec import W2V
-from app.tools.plot import Plot
 
 
 class SimilarityDocs:
@@ -12,7 +11,6 @@ class SimilarityDocs:
     def __init__(self, w2v):
         self.score = 0.98753
         self.w2v: W2V = w2v
-        self.plot = Plot()
 
     def print_similarity(self, df: pandas.DataFrame, source_file, target_files):
         """ {
@@ -58,7 +56,7 @@ class SimilarityDocs:
                                 columns=[target_file["file_name"] for target_file in target_files],
                                 index=[source_file["file_name"] for source_file in source_files])
 
-    def similarity(self, source_files: List[dict], target_files: List[dict]) -> None:
+    def similarity(self, source_files: List[dict], target_files: List[dict]) -> pandas.DataFrame:
         """
         source_file: {"file_name": str, "texts": list[str], "filter_texts": list[str] }
         target_files: list[source_file]
@@ -113,8 +111,8 @@ class SimilarityDocs:
 
                 df = pandas.concat([df, _df])
 
-        sims = self.__similarity(df, source_files, target_files)
-        self.plot.show_heatmap(dataframe=sims, file_name="res.png", title="Сравнение документов", cmap='coolwarm')
+        return self.__similarity(df, source_files, target_files)
+
 
         # for source_doc in source_file["filter_texts"]:
         #     source_vector = self.w2v.get_avg_vector(source_doc)
