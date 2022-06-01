@@ -11,7 +11,7 @@ class Plot:
                                   cmap=cmap)
         heatmap.set_title(title, fontdict={'fontsize': 18}, pad=16)
 
-        plt.savefig(file_name, dpi=300, bbox_inches='tight')
+        plt.savefig(f"images/sims/{file_name}", dpi=300, bbox_inches='tight')
 
     def show_word_embeding(self, x_vals, y_vals, labels, *, file_name: str = "wv.png", selected_indices: int = 50):
 
@@ -25,4 +25,4 @@ class Plot:
         for i in selected_indices:
             plt.annotate(labels[i], (x_vals[i], y_vals[i]))
 
-        plt.savefig(file_name, dpi=300, bbox_inches='tight')
+        plt.savefig(f"images/embedings/{file_name}", dpi=300, bbox_inches='tight')
