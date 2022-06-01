@@ -35,9 +35,7 @@ class App:
 
     def train(self, files: List[dict], model_name: str):
         documents = [filter_text for file in files for filter_text in file["filter_texts"]]
-
-        self.w2v.train(documents)
-        self.w2v.save(model_name)
+        self.w2v.train(documents, model_name=model_name, save=True)
 
     def run(self, is_read_data: bool = False, is_train: bool = False):
         dir = "data\original"

@@ -17,7 +17,8 @@ class W2V:
         self.keyed_vectors = None
         self.index2word_set = None
 
-    def train(self, documents: List, update: bool = False, compute_loss: bool = False) -> None:
+    def train(self, documents: List, model_name: str = "w2v.model",
+              update: bool = False, compute_loss: bool = False, save: bool = False) -> None:
 
         # model = Word2Vec(window=10, vector_size=self.vector_size, epochs=30, workers=6, min_count=2, negative=15)
         # model = Word2Vec(workers=cpu_count(), vector_size=self.vector_size,
@@ -42,6 +43,9 @@ class W2V:
             self.keyed_vectors = model.wv
             self.index2word_set = set(model.wv.index_to_key)
             self.model = model
+
+        if save:
+            self.save(model_name)
 
     def save(self, name: str) -> None:
         self.model.save(f"app/models/{name}")
