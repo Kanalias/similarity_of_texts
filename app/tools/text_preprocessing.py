@@ -7,12 +7,13 @@ import pymorphy2
 
 
 class TextPreprocessing:
-    __punctuation = "!\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~»«–“”"
+    __punctuation = "!\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~»«–“”—"
 
     def __init__(self):
         self.morph = pymorphy2.MorphAnalyzer()
         self.stop_words = self.__read_custom_stop_words()
         self.my_stop_words = self.__read_stop_words()
+        self.__filter_str = "1234567890_.№"
 
     @staticmethod
     def __read_stop_words():
@@ -40,7 +41,7 @@ class TextPreprocessing:
 
         for word in words:
 
-            word = re.sub(r"_{2,}", "", word)
+            word = "".join(filter(lambda a: a not in self.__filter_str, [a for a in word])).strip()
 
             if not word:
                 continue
