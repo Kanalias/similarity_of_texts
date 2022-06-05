@@ -1,5 +1,5 @@
 from typing import List
-
+from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import pandas
 
@@ -70,16 +70,23 @@ class SimilarityDocs:
             Общий процент похожести, поделить количество похожих элементов на количество всех
         """
         df = pandas.DataFrame()
+        l_source_files = len(source_files)
 
-        for source_file in source_files:
-            source_vectors = [self.w2v.get_avg_vector(source_doc[1]) for source_doc in source_file["filter_texts"]]
+        for index, source_file in enumerate(source_files):
+            print(f"{index + 1}/{l_source_files}")
+
+            source_vectors = np.array([self.w2v.get_avg_vector(source_doc[1])
+                                       for source_doc in source_file["filter_texts"]])
 
             for target_file in target_files:
-                target_vectors = [self.w2v.get_avg_vector(target_doc[1]) for target_doc in target_file["filter_texts"]]
+                target_vectors = np.array([self.w2v.get_avg_vector(target_doc[1])
+                                           for target_doc in target_file["filter_texts"]])
 
-                sims = np.array([np.array([self.w2v.similarity(source_vector, target_vector)
-                                           for target_vector in target_vectors])
-                                 for source_vector in source_vectors])
+                # sims = np.array([np.array([self.w2v.similarity(source_vector, target_vector)
+                #                            for target_vector in target_vectors])
+                #                  for source_vector in source_vectors])
+
+                sims = cosine_similarity(source_vectors, target_vectors)
 
                 max_elements = np.argwhere(sims >= self.score)
 
