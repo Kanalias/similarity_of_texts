@@ -35,7 +35,7 @@ class W2V:
             self.index2word_set = set(self.model.wv.index_to_key)
         else:
             model = Word2Vec(workers=cpu_count(), vector_size=self.vector_size,
-                             epochs=30, window=10, min_count=3, hs=0, negative=10, sample=1e-3,
+                             epochs=30, window=10, min_count=0, hs=0, negative=10, sample=1e-3,
                              sg=1, ns_exponent=0.75, cbow_mean=1, seed=1, shrink_windows=True,
                              compute_loss=compute_loss
                              )
