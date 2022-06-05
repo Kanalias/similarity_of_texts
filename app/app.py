@@ -28,7 +28,9 @@ class App:
                 "filter_texts": filter_texts
             })
 
-        self.doc_reader.save_json(files, save_json_file)
+        if save_json_file:
+            self.doc_reader.save_json(files, save_json_file)
+
         return files
 
     def read_json(self, path: str = "data.json"):
@@ -40,13 +42,16 @@ class App:
 
     def run(self, is_read_data: bool = False, is_train: bool = False):
         dir = "data\original"
-        params = "sentences_vs300_w10_sg1_epochs30_hs1_min_count5"
+        params = "sentences_del_number_v2_vs300_w10_sg1_epochs30_negative10_min_count0"
         model_name = f"word2vec_{params}.model"
 
-        files = self.read_data(dir, "sentences_data.json") if is_read_data else self.read_json(path="sentences_data.json")
+        files = self.read_data(dir, save_json_file="") \
+            if is_read_data else self.read_json(path="sentences_data_del_number.json")
+
         self.train(files=files, model_name=model_name) if is_train else self.w2v.load(model_name)
 
-        sims = self.similarity_docs.similarity(source_files=files[0:4], target_files=files[0:4])
+        sims = self.similarity_docs.similarity(source_files=files, target_files=files)
         plot = Plot()
-        plot.show_word_embeding(*self.w2v.reduce_dimensions(), file_name="wv_sentences_vs300_w10_sg1_epochs30_negative15_min_count3.png")
-        plot.show_heatmap(dataframe=sims, file_name=f"res_{params}.png", title="Сравнение документов", cmap='coolwarm')
+        plot.show_word_embeding(*self.w2v.reduce_dimensions(), file_name=f"wv_{params}.png")
+        plot.show_heatmap(dataframe=sims, file_name=f"res_{params}_all.png", title="Сравнение документов",
+                          cmap='coolwarm', figsize=(32, 32))

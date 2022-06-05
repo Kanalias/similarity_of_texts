@@ -5,7 +5,7 @@ import random
 
 class Plot:
 
-    def show_heatmap(self, dataframe: pandas.DataFrame, file_name: str, title: str, cmap: str = None, figsize: tuple = (16, 6)):
+    def show_heatmap(self, dataframe: pandas.DataFrame, file_name: str, title: str, cmap: str = None, figsize=(16, 6)):
         plt.figure(figsize=figsize)
         heatmap = seaborn.heatmap(dataframe, vmin=0, vmax=1, annot=True, linewidths=2, linecolor='black', square=True,
                                   cmap=cmap)
